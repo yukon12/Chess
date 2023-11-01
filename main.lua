@@ -8,6 +8,8 @@ function love.load()
     modes[0] = Title()
     modes[1] = Game()
 
+    --textures 0-5 are white pieces
+    --textures 6-11 are black pieces
     texture = {}
     texture[0] = love.graphics.newImage("resource/white_pawn.png")
     texture[1] = love.graphics.newImage("resource/white_rook.png")
