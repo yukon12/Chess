@@ -103,15 +103,15 @@ function Game()
                         self.turnColour = self.turnColour+1
                         self.turnColour = self.turnColour%2
                         self.stage = 1
-                    end
                     --if there is a piece on a clicked field
-                    if not (self.map[self.clickedX][self.clickedY] == 0) then
+                    elseif not (self.map[self.clickedX][self.clickedY] == 0) and self.pieces[self.map[self.clickedX][self.clickedY]].colour == self.turnColour then
                         --if clicked piece is of a good colour
-                        if self.pieces[self.map[self.clickedX][self.clickedY]].colour == self.turnColour then
                             --move to stage 2 and update possibleMovements
                             self.stage = 2
                             self.possibleMovements = self.pieces[self.map[self.clickedX][self.clickedY]]:movement(self.clickedX, self.clickedY)
-                        end
+                    else
+                        self.possibleMovements = {}
+                        self.stage = 1
                     end
                 end
             end
@@ -134,15 +134,18 @@ function Game()
                         --add circle depending on the situation
                         --if we're in the first stage and the piece is of current colour then mark it blue
                         if self.pieces[self.map[i][j]].colour == self.turnColour then
-                            love.graphics.setColor(0.5, 0.5, 1.0, 0.5) --transparent-blue
-                            love.graphics.circle("fill", (i-1)*100+50, (j-1)*100+50, 50)
+                            if self.clickedX == i and self.clickedY == j then
+                                love.graphics.setColor(0.5, 0.5, 1.0, 0.5) --transparent-blue
+                            else
+                                love.graphics.setColor(0.5, 1.0, 0.5, 0.5) --transparent-blue
+                            end
+                            love.graphics.rectangle("fill", (i-1)*100, (j-1)*100, 100, 100)
                         end
-                    else
-                        --if we're in the second stage and the chosen piece can move onto the current field then mark it red
-                        if self.stage == 2 and self.possibleMovements[i][j] then
-                            love.graphics.setColor(1.0, 0.5, 0.5, 0.5) --transparent-red
-                            love.graphics.circle("fill", (i-1)*100+50, (j-1)*100+50, 50)
-                        end
+                    end
+                    --if we're in the second stage and the chosen piece can move onto the current field then mark it red
+                    if self.stage == 2 and self.possibleMovements[i][j] then
+                        love.graphics.setColor(1.0, 0.5, 0.5, 0.5) --transparent-red
+                        love.graphics.rectangle("fill", (i-1)*100, (j-1)*100, 100, 100)
                     end
                 end
             end
