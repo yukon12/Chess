@@ -1,7 +1,8 @@
+require "source/constants"
+
 function love.conf(t)
     t.window.title = "Chess"
-    t.window.width = 800
-    t.window.height = 800
-    t.window.icon = "resource/white_pawn.png"
-    t.console = true
+    t.window.width = BOARD_SIZE+BAR_SIZE
+    t.window.height = BOARD_SIZE
+    -- t.window.icon = "resource/icon.png"
 end
