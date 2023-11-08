@@ -10,7 +10,7 @@ function piece.color(index)
 	return COLOR[math.ceil(index/6)]
 end
 
-function piece.draw(index, column, file)
+function piece.draw(index, file, rank)
 	local color = piece.color(index)
 	if color == "white" then
 		love.graphics.setColor(LIGHT_COLOR)
@@ -22,8 +22,8 @@ function piece.draw(index, column, file)
 
 	love.graphics.draw(	
 		resources.texturePiece[piece.type(index)],
-		(column-1)*SQUARE_SIZE,
 		(file-1)*SQUARE_SIZE,
+		(rank-1)*SQUARE_SIZE,
 		0, TEXTURE_SCALE, TEXTURE_SCALE, TEXTURE_OFFSET, TEXTURE_OFFSET
 	)
 
