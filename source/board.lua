@@ -16,16 +16,19 @@ board = {nil}
 -- 11 -> black queen,
 -- 12 -> black king.
 board.pieceMatrix = DEFAULT_PIECE_PLACEMENT
+
 -- Matrix containing state of each square.
 -- Different numbers correspond to different states:
 -- 0 -> default state,
 -- 1 -> clicked (black),
--- 2 -> piece that can be moved (blue),
--- 3 -> clicked piece that can be moved (green),
--- 4 -> possible move (red).
-board.stateMatrix = {nil}
+-- 2 -> piece that can be moved (cyan),
+-- 3 -> clicked piece that can be moved (yellow),
+-- 4 -> possible move (magenta).
+board.stateMatrix = GENERATE_MATRIX(0)
 
-board.stateColorList = {TRANSPARENT_COLOR, BLACK_COLOR, BLUE_COLOR, GREEN_COLOR, RED_COLOR} 
+board.availableMoves = GENERATE_MATRIX(false)
+
+board.stateColorList = {TRANSPARENT_COLOR, BLACK_COLOR, CYAN_COLOR, YELLOW_COLOR, MAGENTA_COLOR} 
 
 board.backgroundCanvas = love.graphics.newCanvas(BOARD_SIZE, BOARD_SIZE)
 
@@ -35,10 +38,17 @@ board.highlightCanvas = love.graphics.newCanvas(BOARD_SIZE, BOARD_SIZE)
 
 -- Checks if there is any piece on the given square.
 function board:isPiece(file, rank)
+	if not self:isOnBoard(file, rank) then return false end
 	if self.pieceMatrix[file][rank] > 0 then
 		return true
 	end
 	return false
+end
+
+function board:isOnBoard(file, rank)
+	if file < 1 or file > 8 then return false end
+	if rank < 1 or rank > 8 then return false end
+	return true
 end
 
 function board:squareColor(file, rank)
@@ -59,8 +69,30 @@ function board:updateStateMatrix(file, rank)
 			else
 				self.stateMatrix[i][j] = (i==file and j==rank) and 1 or 0
 			end
+
+			if self.availableMoves[i][j] then
+				self.stateMatrix[i][j] = 4
+			end
 		end
 	end
+end
+
+function board:updateAvailableMoves(file, rank)
+	if self:squareColor(file, rank) ~= miscellaneous.turn then
+		self.availableMoves = GENERATE_MATRIX(false)
+	else
+		self.availableMoves = piece.getAvailableMoves(self.pieceMatrix[file][rank], file, rank)
+	end
+end
+
+function board:isAvailable(file, rank)
+	return self.availableMoves[file][rank]
+end
+
+function board:move(fromFile, fromRank, toFile, toRank)
+	self.pieceMatrix[toFile][toRank] = self.pieceMatrix[fromFile][fromRank]
+	self.pieceMatrix[fromFile][fromRank] = 0
+	miscellaneous:switchTurn()
 end
 
 function board:updateBackgroundCanvas()
@@ -108,7 +140,6 @@ end
 
 -- Initialize Board module.
 function board:initialize()	
-	self:updateStateMatrix()
 	self:updateBackgroundCanvas()
 	self:updatePieceCanvas()
 	self:updateHighlightCanvas()

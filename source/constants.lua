@@ -13,14 +13,14 @@ DEFAULT_COLOR = {1.00, 1.00, 1.00}
 TRANSPARENT_COLOR = {0.00, 0.00, 0.00, 0.00}
 -- #000000 (HIGHLIGHT)
 BLACK_COLOR = {0.00, 0.00, 0.00, HIGHLIGHT_FACTOR}
--- #FF0000
-RED_COLOR = {1.00, 0.00, 0.00, HIGHLIGHT_FACTOR}
--- #00FF00
-GREEN_COLOR = {0.00, 1.00, 0.00, HIGHLIGHT_FACTOR}
--- #0000FF
-BLUE_COLOR = {0.00, 0.00, 1.00, HIGHLIGHT_FACTOR}
+-- #FF00FF (HIGHLIGHT)
+MAGENTA_COLOR = {1.00, 0.00, 1.00, HIGHLIGHT_FACTOR}
+-- #FFFF00 (HIGHLIGHT)
+YELLOW_COLOR = {1.00, 1.00, 0.00, HIGHLIGHT_FACTOR}
+-- #00FFFF (HIGHLIGHT)
+CYAN_COLOR = {0.00, 1.00, 1.00, HIGHLIGHT_FACTOR}
 
-DEBUG = false
+DEBUG = true
 
 SQUARE_SIZE = 64
 BOARD_SIZE = 8*SQUARE_SIZE
@@ -36,6 +36,17 @@ DEFAULT_PIECE_PLACEMENT = {
 	{9, 7, 0, 0, 0, 0, 1, 3},
 	{8, 7, 0, 0, 0, 0, 1, 2}
 }
+
+function GENERATE_MATRIX(value)
+	local result = {nil}
+	for i = 1, 8 do
+		result[i] = {nil}
+		for j = 1, 8 do
+			result[i][j] = value
+		end
+	end
+	return result
+end
 
 PIECE_TYPE = {"pawn", "rook", "knight", "bishop", "queen", "king"}
 

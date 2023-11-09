@@ -22,7 +22,6 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button)
-	debug.log("click")
 	if button == 1 then
 		interface:click(x, y)
 	end

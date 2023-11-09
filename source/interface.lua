@@ -17,6 +17,12 @@ function interface:click(x, y)
 end
 
 function interface:select(file, rank)
+	if board:isAvailable(file, rank) then
+		board:move(self.selected.file, self.selected.rank, file, rank)
+		board:updatePieceCanvas()
+	end
+	board:updateAvailableMoves(file, rank)
 	board:updateStateMatrix(file, rank)
 	board:updateHighlightCanvas()
+	self.selected = {file = file, rank = rank}
 end

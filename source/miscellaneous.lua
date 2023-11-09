@@ -6,3 +6,9 @@ function miscellaneous:switchTurn()
 	if self.turn == "white" then self.turn = "black"
 	else self.turn = "white" end
 end
+
+function miscellaneous:oppositeColor(color)
+	if color == "white" then return "black" end
+	if color == "black" then return "white" end
+	return nil
+end
