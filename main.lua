@@ -4,15 +4,15 @@ require "source/interface"
 require "source/debug"
 require "source/resources"
 require "source/piece"
+require "source/sidebar"
 require "source/board"
 
 function love.load()
 	love.graphics.setDefaultFilter("nearest", "nearest")
-	-- We want line to be one pixel wide compared to our textures.
-	love.graphics.setLineWidth(TEXTURE_SCALE)
 
 	resources:initialize()
 	board:initialize()	
+	sidebar:initialize()
 end
 
 function love.keypressed(key)
@@ -33,4 +33,5 @@ end
 
 function love.draw()
 	board:draw()
+	sidebar:draw()
 end

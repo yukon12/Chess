@@ -71,10 +71,9 @@ function piece.pawnMove(file, rank, color)
 
 	if not board:isPiece(file, rank+front) then
 		result[file][rank+front] = true
-	end
-
-	if rank == initialRank and not board:isPiece(file, rank+2*front) then
-		result[file][rank+2*front] = true
+		if rank == initialRank and not board:isPiece(file, rank+2*front) then
+			result[file][rank+2*front] = true
+		end
 	end
 
 	if board:isOnBoard(file+1, rank+front) and board:squareColor(file+1, rank+front) == miscellaneous:oppositeColor(color) then

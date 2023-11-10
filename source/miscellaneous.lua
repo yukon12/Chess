@@ -5,6 +5,7 @@ miscellaneous.turn = "white"
 function miscellaneous:switchTurn()
 	if self.turn == "white" then self.turn = "black"
 	else self.turn = "white" end
+	sidebar:updateCanvas()
 end
 
 function miscellaneous:oppositeColor(color)
