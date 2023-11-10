@@ -30,6 +30,40 @@ function piece.draw(index, file, rank)
 	love.graphics.setColor(DEFAULT_COLOR)
 end
 
+function piece.linearMove(file, rank, color, fileDirection, rankDirection, matrix)
+	local currentFile
+	local currentRank
+	for i = 1, 7 do
+		currentFile = file+i*fileDirection
+		currentRank = rank+i*rankDirection
+		if not board:isOnBoard(currentFile, currentRank) then return end
+		if board:isPiece(currentFile, currentRank) then
+			if board:squareColor(currentFile, currentRank) == miscellaneous:oppositeColor(color) then
+				matrix[currentFile][currentRank] = true
+			end
+			return
+		else
+			matrix[currentFile][currentRank] = true
+		end
+	end
+end
+
+function piece.pointwiseMove(file, rank, color, fileDirection, rankDirection, matrix)
+	if #fileDirection ~= #rankDirection then return false end
+	local points = #fileDirection
+	local currentFile
+	local currentRank
+	for i = 1, points do
+		currentFile = file+fileDirection[i]
+		currentRank = rank+rankDirection[i]
+		if board:isOnBoard(currentFile, currentRank) then
+			if board:squareColor(currentFile, currentRank) ~= color then
+				matrix[currentFile][currentRank] = true
+			end
+		end
+	end
+end
+
 function piece.pawnMove(file, rank, color)
 	local result = GENERATE_MATRIX(false)
 	local front = (color=="white") and -1 or 1
@@ -55,23 +89,50 @@ function piece.pawnMove(file, rank, color)
 end
 
 function piece.rookMove(file, rank, color)
-	return GENERATE_MATRIX(false)
+	local result = GENERATE_MATRIX(false)
+	piece.linearMove(file, rank, color, 0, -1, result)
+	piece.linearMove(file, rank, color, 0, 1, result)
+	piece.linearMove(file, rank, color, -1, 0, result)
+	piece.linearMove(file, rank, color, 1, 0, result)
+	return result
 end
 
 function piece.knightMove(file, rank, color)
-	return GENERATE_MATRIX(false)
+	local result = GENERATE_MATRIX(false)
+	local fileDirection = {-2, -2, -1, -1, 1, 1, 2, 2}
+	local rankDirection = {-1, 1, -2, 2, -2, 2, -1, 1}
+	piece.pointwiseMove(file, rank, color, fileDirection, rankDirection, result)
+	return result
 end
 
 function piece.bishopMove(file, rank, color)
-	return GENERATE_MATRIX(false)
+	local result = GENERATE_MATRIX(false)
+	piece.linearMove(file, rank, color, 1, 1, result)
+	piece.linearMove(file, rank, color, -1, 1, result)
+	piece.linearMove(file, rank, color, 1, -1, result)
+	piece.linearMove(file, rank, color, -1, -1, result)
+	return result
 end
 
 function piece.queenMove(file, rank, color)
-	return GENERATE_MATRIX(false)
+	local result = GENERATE_MATRIX(false)
+	piece.linearMove(file, rank, color, 0, -1, result)
+	piece.linearMove(file, rank, color, 0, 1, result)
+	piece.linearMove(file, rank, color, -1, 0, result)
+	piece.linearMove(file, rank, color, 1, 0, result)
+	piece.linearMove(file, rank, color, 1, 1, result)
+	piece.linearMove(file, rank, color, -1, 1, result)
+	piece.linearMove(file, rank, color, 1, -1, result)
+	piece.linearMove(file, rank, color, -1, -1, result)
+	return result
 end
 
 function piece.kingMove(file, rank, color)
-	return GENERATE_MATRIX(false)
+	local result = GENERATE_MATRIX(false)
+	local fileDirection = {-1, -1, -1, 0, 0, 1, 1, 1}
+	local rankDirection = {-1, 0, 1, -1, 1, -1, 0, 1}
+	piece.pointwiseMove(file, rank, color, fileDirection, rankDirection, result)
+	return result
 end
 
 piece.moveFunction = {
