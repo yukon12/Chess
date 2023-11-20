@@ -28,6 +28,9 @@ board.stateMatrix = GENERATE_MATRIX(0)
 
 board.availableMoves = GENERATE_MATRIX(false)
 
+board.enPassantMatrixLeft = GENERATE_MATRIX(false)
+board.enPassantMatrixRight = GENERATE_MATRIX(false)
+
 board.stateColorList = {TRANSPARENT_COLOR, BLACK_COLOR, CYAN_COLOR, YELLOW_COLOR, MAGENTA_COLOR} 
 
 board.backgroundCanvas = love.graphics.newCanvas(BOARD_SIZE, BOARD_SIZE)
@@ -89,7 +92,62 @@ function board:isAvailable(file, rank)
 	return self.availableMoves[file][rank]
 end
 
+function board:isDoublePush(fromFile, fromRank, toFile, toRank)
+	if piece.type(self.pieceMatrix[fromFile][fromRank]) ~= "pawn" then
+		return false
+	end
+
+	local front = (piece.color(self.pieceMatrix[fromFile][fromRank])=="white") and -1 or 1 
+	if fromFile ~= toFile or fromRank+2*front ~= toRank then
+		return false
+	end
+
+	return true
+end
+
+function board:isEnPassant(fromFile, fromRank, toFile, toRank)
+	if piece.type(self.pieceMatrix[fromFile][fromRank]) ~= "pawn" then
+		return false
+	end
+
+	if piece.type(self.pieceMatrix[toFile][toRank]) ~= nil then
+		return false
+	end
+
+	local front = (piece.color(self.pieceMatrix[fromFile][fromRank])=="white") and -1 or 1 
+	if math.abs(toFile-fromFile) ~= 1 or toRank-fromRank ~= front then
+		return false
+	end
+
+	return true
+end
+
+
 function board:move(fromFile, fromRank, toFile, toRank)
+	if board:isDoublePush(fromFile, fromRank, toFile, toRank) then
+		local leftPiece = (toFile>1) and self.pieceMatrix[toFile-1][toRank] or 0
+		local rightPiece = (toFile<8) and self.pieceMatrix[toFile+1][toRank] or 0
+		local oppositeColor = miscellaneous:oppositeColor(piece.color(self.pieceMatrix[fromFile][fromRank]))
+
+		if piece.type(leftPiece) == "pawn" and piece.color(leftPiece) == oppositeColor then
+			self.enPassantMatrixRight[toFile-1][toRank] = true
+			debug.log(tostring(toFile-1)..' '..tostring(toRank))
+		end
+
+		if piece.type(rightPiece) == "pawn" and piece.color(rightPiece) == oppositeColor then
+			self.enPassantMatrixLeft[toFile+1][toRank] = true
+			debug.log(tostring(toFile+1)..' '..tostring(toRank))
+		end
+	end
+	self.enPassantMatrixLeft[fromFile][fromRank] = false
+	self.enPassantMatrixLeft[toFile][toRank] = false
+	self.enPassantMatrixRight[fromFile][fromRank] = false
+	self.enPassantMatrixRight[toFile][toRank] = false
+
+	if board:isEnPassant(fromFile, fromRank, toFile, toRank) then
+		self.pieceMatrix[toFile][fromRank] = 0
+	end
+
 	self.pieceMatrix[toFile][toRank] = self.pieceMatrix[fromFile][fromRank]
 	self.pieceMatrix[fromFile][fromRank] = 0
 	miscellaneous:switchTurn()
@@ -140,6 +198,7 @@ end
 
 -- Initialize Board module.
 function board:initialize()	
+	self:updateStateMatrix(-1, -1)
 	self:updateBackgroundCanvas()
 	self:updatePieceCanvas()
 	self:updateHighlightCanvas()

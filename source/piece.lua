@@ -84,6 +84,14 @@ function piece.pawnMove(file, rank, color)
 		result[file-1][rank+front] = true
 	end
 
+	if board.enPassantMatrixLeft[file][rank] then
+		result[file-1][rank+front] = true
+	end
+
+	if board.enPassantMatrixRight[file][rank] then
+		result[file+1][rank+front] = true
+	end
+
 	return result
 end
 
