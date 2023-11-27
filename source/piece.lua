@@ -139,6 +139,20 @@ function piece.kingMove(file, rank, color)
 	local fileDirection = {-1, -1, -1, 0, 0, 1, 1, 1}
 	local rankDirection = {-1, 0, 1, -1, 1, -1, 0, 1}
 	piece.pointwiseMove(file, rank, color, fileDirection, rankDirection, result)
+
+	if board.castlingAvailability[color].king then
+		if board.castlingAvailability[color].left then
+			if board.pieceMatrix[2][rank] == 0 and board.pieceMatrix[3][rank] == 0 and board.pieceMatrix[4][rank] == 0 then
+				result[3][rank] = true
+			end
+		end
+		if board.castlingAvailability[color].right then	
+			if board.pieceMatrix[6][rank] == 0 and board.pieceMatrix[7][rank] == 0 then
+				result[7][rank] = true
+			end
+		end
+	end
+	
 	return result
 end
 

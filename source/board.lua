@@ -31,6 +31,16 @@ board.availableMoves = GENERATE_MATRIX(false)
 board.enPassantMatrixLeft = GENERATE_MATRIX(false)
 board.enPassantMatrixRight = GENERATE_MATRIX(false)
 
+board.castlingAvailability = {nil}
+board.castlingAvailability.white = {nil}
+board.castlingAvailability.black = {nil}
+board.castlingAvailability.white.left = true
+board.castlingAvailability.white.right = true
+board.castlingAvailability.white.king = true
+board.castlingAvailability.black.left = true
+board.castlingAvailability.black.right = true
+board.castlingAvailability.black.king = true
+
 board.stateColorList = {TRANSPARENT_COLOR, BLACK_COLOR, CYAN_COLOR, YELLOW_COLOR, MAGENTA_COLOR} 
 
 board.backgroundCanvas = love.graphics.newCanvas(BOARD_SIZE, BOARD_SIZE)
@@ -146,6 +156,28 @@ function board:move(fromFile, fromRank, toFile, toRank)
 
 	if board:isEnPassant(fromFile, fromRank, toFile, toRank) then
 		self.pieceMatrix[toFile][fromRank] = 0
+	end
+
+	local type = piece.type(self.pieceMatrix[fromFile][fromRank])
+	local color = piece.color(self.pieceMatrix[fromFile][fromRank])
+	if type == "rook" then
+		if fromFile == 1 then
+			self.castlingAvailability[color].left = false
+		elseif fromFile == 8 then
+			self.castlingAvailability[color].right = false
+		end
+	elseif type == "king" then
+		self.castlingAvailability[color].king = false
+	end
+
+	if type == "king" then
+		if fromFile-toFile == 2 then
+			self.pieceMatrix[4][toRank] = self.pieceMatrix[1][toRank]
+			self.pieceMatrix[1][toRank] = 0
+		elseif toFile-fromFile == 2 then
+			self.pieceMatrix[6][toRank] = self.pieceMatrix[8][toRank]
+			self.pieceMatrix[8][toRank] = 0
+		end
 	end
 
 	self.pieceMatrix[toFile][toRank] = self.pieceMatrix[fromFile][fromRank]
