@@ -1,5 +1,5 @@
 TITLE = "Chess"
-VERSION = "0.8"
+VERSION = "0.9"
 
 HIGHLIGHT_FACTOR = 0.50
 
@@ -49,6 +49,17 @@ function GENERATE_MATRIX(value)
 	end
 	return result
 end
+
+function COPY_MATRIX(source)
+	local result = {nil}
+	for i = 1, 8 do
+		result[i] = {nil}
+		for j = 1, 8 do
+			result[i][j] = source[i][j]
+		end
+	end
+	return result
+end	
 
 PIECE_TYPE = {"pawn", "rook", "knight", "bishop", "queen", "king"}
 

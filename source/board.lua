@@ -15,7 +15,8 @@ board = {nil}
 -- 10 -> black bishop,
 -- 11 -> black queen,
 -- 12 -> black king.
-board.pieceMatrix = DEFAULT_PIECE_PLACEMENT
+board.pieceMatrix = COPY_MATRIX(DEFAULT_PIECE_PLACEMENT)
+board.previousPieceMatrix = COPY_MATRIX(board.pieceMatrix)
 
 -- Matrix containing state of each square.
 -- Different numbers correspond to different states:
@@ -134,6 +135,8 @@ end
 
 
 function board:move(fromFile, fromRank, toFile, toRank)
+	self.previousPieceMatrix = COPY_MATRIX(self.pieceMatrix)
+
 	if board:isDoublePush(fromFile, fromRank, toFile, toRank) then
 		local leftPiece = (toFile>1) and self.pieceMatrix[toFile-1][toRank] or 0
 		local rightPiece = (toFile<8) and self.pieceMatrix[toFile+1][toRank] or 0
