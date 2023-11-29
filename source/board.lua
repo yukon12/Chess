@@ -183,6 +183,7 @@ function board:move(fromFile, fromRank, toFile, toRank)
 		end
 	end
 
+	if piece.type(self.pieceMatrix[toFile][toRank]) == "king" then love.event.quit() end
 	self.pieceMatrix[toFile][toRank] = self.pieceMatrix[fromFile][fromRank]
 	self.pieceMatrix[fromFile][fromRank] = 0
 	miscellaneous:switchTurn()

@@ -1,5 +1,5 @@
 TITLE = "Chess"
-VERSION = "0.9"
+VERSION = "1.0"
 
 HIGHLIGHT_FACTOR = 0.50
 
